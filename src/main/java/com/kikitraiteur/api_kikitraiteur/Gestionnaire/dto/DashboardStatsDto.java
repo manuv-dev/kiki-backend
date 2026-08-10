@@ -13,6 +13,7 @@ public class DashboardStatsDto {
     private long acceptedRequests;
     private long pendingRequests;
     private long rejectedRequests;
+    private long urgentRequests;
     private double conversionRate;
     private double totalRevenue;
     private long totalClients;

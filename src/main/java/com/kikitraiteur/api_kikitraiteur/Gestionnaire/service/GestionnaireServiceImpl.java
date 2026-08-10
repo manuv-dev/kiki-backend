@@ -71,6 +71,9 @@ public class GestionnaireServiceImpl implements GestionnaireService {
         long rejectedRequests = allDemandes.stream()
                 .filter(d -> isRejectedStatus(d.getStatus()))
                 .count();
+        long urgentRequests = allDemandes.stream()
+                .filter(d -> isUrgentStatus(d.getStatus()))
+                .count();
 
         double conversionRate = totalRequests > 0
                 ? (double) Math.round(((double) acceptedRequests / totalRequests) * 100.0)
@@ -103,6 +106,7 @@ public class GestionnaireServiceImpl implements GestionnaireService {
                 .acceptedRequests(acceptedRequests)
                 .pendingRequests(pendingRequests)
                 .rejectedRequests(rejectedRequests)
+                .urgentRequests(urgentRequests)
                 .conversionRate(conversionRate)
                 .totalRevenue(totalRevenue)
                 .totalClients(totalClients)
@@ -113,10 +117,14 @@ public class GestionnaireServiceImpl implements GestionnaireService {
     }
 
     private boolean isAcceptedStatus(String status) {
-        return status != null && (status.equalsIgnoreCase("accepted") || status.equalsIgnoreCase("approved"));
+        return status != null && (status.equalsIgnoreCase("accepted") || status.equalsIgnoreCase("approved") || status.equalsIgnoreCase("aboutis"));
     }
 
     private boolean isPendingStatus(String status) {
+        return status != null && status.equalsIgnoreCase("sent");
+    }
+
+    private boolean isUrgentStatus(String status) {
         return status == null || status.equalsIgnoreCase("pending") || status.equalsIgnoreCase("en_attente") || status.equalsIgnoreCase("new");
     }
 

@@ -4,6 +4,10 @@ import com.kikitraiteur.api_kikitraiteur.Gestionnaire.dto.DashboardStatsDto;
 import com.kikitraiteur.api_kikitraiteur.Gestionnaire.dto.GestionnaireDemandeDto;
 import com.kikitraiteur.api_kikitraiteur.Gestionnaire.dto.UpdateStatusRequestDto;
 import com.kikitraiteur.api_kikitraiteur.Gestionnaire.service.GestionnaireService;
+import com.kikitraiteur.api_kikitraiteur.Client.service.DevisService;
+import com.kikitraiteur.api_kikitraiteur.Client.service.ClientService;
+import com.kikitraiteur.api_kikitraiteur.Client.dto.DirectDevisRequestDto;
+import com.kikitraiteur.api_kikitraiteur.Client.dto.DevisDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -19,6 +23,8 @@ import java.util.List;
 public class GestionnaireController {
 
     private final GestionnaireService gestionnaireService;
+    private final DevisService devisService;
+    private final ClientService clientService;
 
     @GetMapping("/demandes")
     public ResponseEntity<List<GestionnaireDemandeDto>> getAllDemandes() {
@@ -44,5 +50,24 @@ public class GestionnaireController {
     public ResponseEntity<DashboardStatsDto> getDashboardStats() {
         log.info("Appel GET /api/gestionnaire/dashboard/stats");
         return ResponseEntity.ok(gestionnaireService.getDashboardStats());
+    }
+
+    @PostMapping("/devis/direct")
+    public ResponseEntity<DevisDto> createDirectDevis(@RequestBody DirectDevisRequestDto requestDto) {
+        log.info("Appel POST /api/gestionnaire/devis/direct");
+        return ResponseEntity.ok(devisService.createDirectDevis(requestDto));
+    }
+
+    @PostMapping("/clients")
+    public ResponseEntity<?> createClient(@RequestBody java.util.Map<String, String> payload) {
+        log.info("Appel POST /api/gestionnaire/clients");
+        String email = payload.get("email");
+        String name = payload.get("name");
+        String phone = payload.get("phone");
+        String type = payload.get("type");
+        String organization = payload.get("organization");
+        
+        com.kikitraiteur.api_kikitraiteur.Client.model.Client newClient = clientService.getOrCreateClient(email, name, phone, type, organization);
+        return ResponseEntity.ok(newClient);
     }
 }

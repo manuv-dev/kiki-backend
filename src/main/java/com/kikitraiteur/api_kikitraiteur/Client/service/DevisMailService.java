@@ -9,6 +9,7 @@ import org.springframework.core.io.ByteArrayResource;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
+import org.springframework.scheduling.annotation.Async;
 
 @Service
 @Slf4j
@@ -23,6 +24,7 @@ public class DevisMailService {
         this.pdfService = pdfService;
     }
 
+    @Async
     public void sendDevisEmailWithPdf(Devis devis) {
         String recipient = devis.getClientEmail();
         if (recipient == null || recipient.trim().isEmpty() || "client@gmail.com".equalsIgnoreCase(recipient)) {

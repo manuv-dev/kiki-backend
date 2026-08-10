@@ -8,23 +8,25 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class DevisDto {
-    private Long id;
-    private String devisRef;
-    private Long demandeId;
-    private String clientName;
-    private String clientEmail;
-    private String clientPhone;
-    private String gestionnaireName;
+public class DirectDevisRequestDto {
+    private Long clientId;
+    
+    // Pour création nouveau client
+    private String newClientName;
+    private String newClientEmail;
+    private String newClientPhone;
+    private String newClientType; // particulier, entreprise
+    private String newClientOrganization;
+
+    // Champs du devis
     private String prestationId;
     private String signatureGastronomique;
     private Integer guests;
     private String location;
     private String date;
     private String time;
-    private String dateCreated;
     private Double tvaRate;
     private Double discount;
-    private String status;
     private List<DevisItem> items;
+    private String gestionnaireName;
 }

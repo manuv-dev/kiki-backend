@@ -25,8 +25,15 @@ public class Devis {
 
     private String clientName;
     private String clientEmail;
+    private String clientPhone;
+    private String gestionnaireName;
     private String prestationId;
     private String signatureGastronomique;
+    
+    private Integer guests;
+    private String location;
+    private String date;
+    private String time;
 
     private String dateCreated;
     private Double tvaRate;
