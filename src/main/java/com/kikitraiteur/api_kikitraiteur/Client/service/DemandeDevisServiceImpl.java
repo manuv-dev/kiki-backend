@@ -32,14 +32,14 @@ public class DemandeDevisServiceImpl implements DemandeDevisService {
     @Override
     @Transactional
     public DemandeDevisResponseDto creerDemandeDevis(DemandeDevisRequestDto requestDto) {
-        log.info("Traitement et validation d'une nouvelle demande de devis pour l'email client: {}", requestDto.getClientEmail());
+        log.info("Traitement et validation d'une nouvelle demande de devis pour l'email client: {}", requestDto.getEmail());
         validateDemandeDevis(requestDto);
 
         // 1. Vérifier si le client existe, sinon l'enregistrer
         Client client = clientService.getOrCreateClient(
-                requestDto.getClientEmail(),
-                requestDto.getClientName(),
-                requestDto.getClientPhone(),
+                requestDto.getEmail(),
+                requestDto.getName(),
+                requestDto.getPhone(),
                 requestDto.getClientType(),
                 requestDto.getOrganization()
         );
@@ -85,14 +85,14 @@ public class DemandeDevisServiceImpl implements DemandeDevisService {
 
         // 1. Validation de l'email
         String emailRegex = "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$";
-        if (dto.getClientEmail() == null || dto.getClientEmail().isBlank() || !dto.getClientEmail().matches(emailRegex)) {
-            throw new InvalidEmailException("L'adresse email '" + dto.getClientEmail() + "' n'est pas valide.");
+        if (dto.getEmail() == null || dto.getEmail().isBlank() || !dto.getEmail().matches(emailRegex)) {
+            throw new InvalidEmailException("L'adresse email '" + dto.getEmail() + "' n'est pas valide.");
         }
 
         // 2. Validation du numéro de téléphone (Standard Sénégalais)
         String senegalPhoneRegex = "^(\\+221|00221)?\\s*(7[05678]|33)\\s*(\\d\\s*){7}$";
-        if (dto.getClientPhone() == null || dto.getClientPhone().isBlank() || !dto.getClientPhone().matches(senegalPhoneRegex)) {
-            throw new InvalidSenegalPhoneException("Le numéro de téléphone '" + dto.getClientPhone() + "' n'est pas conforme au standard sénégalais (ex: +221 77 777 77 77 ou 70... / 75... / 76... / 77... / 78... / 33...).");
+        if (dto.getPhone() == null || dto.getPhone().isBlank() || !dto.getPhone().matches(senegalPhoneRegex)) {
+            throw new InvalidSenegalPhoneException("Le numéro de téléphone '" + dto.getPhone() + "' n'est pas conforme au standard sénégalais (ex: +221 77 777 77 77 ou 70... / 75... / 76... / 77... / 78... / 33...).");
         }
 
         // 3. Validation de la date d'événement (Pas de date dans le passé)

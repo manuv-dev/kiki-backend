@@ -7,6 +7,6 @@ import java.util.List;
 public interface GestionnaireService {
     List<GestionnaireDemandeDto> getAllDemandes();
     GestionnaireDemandeDto getDemandeById(Long id);
-    GestionnaireDemandeDto updateDemandeStatus(Long id, String status);
-    DashboardStatsDto getDashboardStats();
+    GestionnaireDemandeDto updateDemandeStatus(Long id, String status, java.util.List<Long> propositionIds);
+    DashboardStatsDto getDashboardStats(Integer year, Integer month);
 }

@@ -43,13 +43,15 @@ public class GestionnaireController {
             @PathVariable Long id,
             @RequestBody UpdateStatusRequestDto requestDto) {
         log.info("Appel PUT /api/gestionnaire/demandes/{}/status avec nouveau statut : {}", id, requestDto.getStatus());
-        return ResponseEntity.ok(gestionnaireService.updateDemandeStatus(id, requestDto.getStatus()));
+        return ResponseEntity.ok(gestionnaireService.updateDemandeStatus(id, requestDto.getStatus(), requestDto.getPropositionIds()));
     }
 
     @GetMapping("/dashboard/stats")
-    public ResponseEntity<DashboardStatsDto> getDashboardStats() {
-        log.info("Appel GET /api/gestionnaire/dashboard/stats");
-        return ResponseEntity.ok(gestionnaireService.getDashboardStats());
+    public ResponseEntity<DashboardStatsDto> getDashboardStats(
+            @RequestParam(required = false) Integer year,
+            @RequestParam(required = false) Integer month) {
+        log.info("Appel GET /api/gestionnaire/dashboard/stats avec year={} et month={}", year, month);
+        return ResponseEntity.ok(gestionnaireService.getDashboardStats(year, month));
     }
 
     @PostMapping("/devis/direct")

@@ -8,10 +8,16 @@ import com.kikitraiteur.api_kikitraiteur.Client.repository.DemandeDevisRepositor
 import com.kikitraiteur.api_kikitraiteur.Gestionnaire.dto.DashboardStatsDto;
 import com.kikitraiteur.api_kikitraiteur.Gestionnaire.dto.GestionnaireDemandeDto;
 import com.kikitraiteur.api_kikitraiteur.Gestionnaire.mapper.GestionnaireMapper;
+import com.kikitraiteur.api_kikitraiteur.Gestionnaire.model.Proposition;
+import com.kikitraiteur.api_kikitraiteur.Gestionnaire.model.PropositionEnvoyee;
+import com.kikitraiteur.api_kikitraiteur.Gestionnaire.repository.PropositionEnvoyeeRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -24,6 +30,8 @@ public class GestionnaireServiceImpl implements GestionnaireService {
     private final DemandeDevisRepository demandeDevisRepository;
     private final ClientRepository clientRepository;
     private final GestionnaireMapper gestionnaireMapper;
+    private final PropositionService propositionService;
+    private final PropositionEnvoyeeRepository propositionEnvoyeeRepository;
 
     @Override
     @Transactional(readOnly = true)
@@ -45,20 +53,60 @@ public class GestionnaireServiceImpl implements GestionnaireService {
 
     @Override
     @Transactional
-    public GestionnaireDemandeDto updateDemandeStatus(Long id, String status) {
+    public GestionnaireDemandeDto updateDemandeStatus(Long id, String status, List<Long> propositionIds) {
         log.info("Mise à jour du statut de la demande ID: {} en {}", id, status);
         DemandeDevis demandeDevis = demandeDevisRepository.findById(id)
                 .orElseThrow(() -> new DemandeDevisNotFoundException("Aucune demande trouvée avec l'ID: " + id));
         demandeDevis.setStatus(status);
         DemandeDevis saved = demandeDevisRepository.save(demandeDevis);
+        
+        if (propositionIds != null && !propositionIds.isEmpty() && ("sent".equalsIgnoreCase(status) || "propositions_envoyees".equalsIgnoreCase(status) || "accepted".equalsIgnoreCase(status) || "acceptee".equalsIgnoreCase(status) || "approved".equalsIgnoreCase(status))) {
+            for (Long propositionId : propositionIds) {
+                log.info("Création de la PropositionEnvoyee pour la demande ID: {} avec la proposition ID: {}", id, propositionId);
+                Proposition propositionBase = propositionService.getPropositionById(propositionId);
+                
+                PropositionEnvoyee propositionEnvoyee = PropositionEnvoyee.builder()
+                        .demandeId(id)
+                        .propositionId(propositionBase.getId())
+                        .titre(propositionBase.getTitre())
+                        .description(propositionBase.getDescription())
+                        .prixUnitairePersonne(propositionBase.getPrixUnitairePersonne())
+                        .status("envoyee")
+                        .sections(propositionBase.getSections().stream().map(section -> 
+                            com.kikitraiteur.api_kikitraiteur.Gestionnaire.model.PropositionEnvoyeeSection.builder()
+                                .nom(section.getNom())
+                                .maxChoix(section.getMaxChoix())
+                                .items(section.getItems().stream().map(item -> 
+                                    com.kikitraiteur.api_kikitraiteur.Gestionnaire.model.PropositionEnvoyeeSectionItem.builder()
+                                        .nom(item.getNom())
+                                        .description(item.getDescription())
+                                        .isSelected(false)
+                                        .build()
+                                ).collect(Collectors.toList()))
+                                .build()
+                        ).collect(Collectors.toList()))
+                        .build();
+                
+                propositionEnvoyeeRepository.save(propositionEnvoyee);
+            }
+        }
+        
         return gestionnaireMapper.toDto(saved);
     }
 
     @Override
     @Transactional(readOnly = true)
-    public DashboardStatsDto getDashboardStats() {
+    public DashboardStatsDto getDashboardStats(Integer year, Integer month) {
         log.info("Calcul des statistiques réelles du tableau de bord depuis la base de données");
         List<DemandeDevis> allDemandes = demandeDevisRepository.findAllByOrderByDateSubmittedDesc();
+        
+        if (year != null && month != null) {
+            allDemandes = allDemandes.stream().filter(d -> {
+                java.time.LocalDateTime dt = d.getDateSubmitted();
+                return dt != null && dt.getYear() == year && dt.getMonthValue() == month;
+            }).collect(Collectors.toList());
+        }
+        
         List<Client> allClients = clientRepository.findAll();
 
         long totalRequests = allDemandes.size();

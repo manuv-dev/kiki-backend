@@ -12,43 +12,37 @@ import lombok.*;
 @AllArgsConstructor
 @Builder
 public class DemandeDevisRequestDto {
-    @NotBlank(message = "Le nom du client est obligatoire")
-    private String clientName;
-
-    @NotBlank(message = "L'email est obligatoire")
-    @Email(message = "L'email doit être valide")
-    @jakarta.validation.constraints.Pattern(
-        regexp = "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$",
-        message = "Format d'email invalide"
-    )
-    private String clientEmail;
-
-    @NotBlank(message = "Le téléphone est obligatoire")
-    @jakarta.validation.constraints.Pattern(
-        regexp = "^(\\+221|00221)?\\s*(7[05678]|33)\\s*(\\d\\s*){7}$",
-        message = "Le numéro de téléphone doit être conforme au standard sénégalais (ex: +221 77 777 77 77)"
-    )
-    private String clientPhone;
-
+    @NotBlank(message = "Le type de client est obligatoire")
     private String clientType;
 
     private String organization;
 
+    @NotBlank(message = "Le nom est obligatoire")
+    private String name;
+
+    @NotBlank(message = "L'email est obligatoire")
+    @Email(message = "L'email doit être valide")
+    private String email;
+
+    @NotBlank(message = "Le téléphone est obligatoire")
+    private String phone;
+
+    @NotBlank(message = "La prestation est obligatoire")
     private String prestationId;
 
-    private String prestationTitle;
-
-    private String date;
-
-    private String time;
-
-    private Integer guests;
-
-    private Boolean isInstitution;
-
-    private String location;
-
-    private String cuisine;
-
+    private String evenementNature;
     private String message;
+    
+    @NotNull(message = "Le nombre de convives est obligatoire")
+    @Min(value = 1, message = "Il doit y avoir au moins 1 convive")
+    private Integer guests;
+    
+    @NotBlank(message = "La date est obligatoire")
+    private String date;
+    
+    @NotBlank(message = "L'heure est obligatoire")
+    private String time;
+    
+    private String locationType;
+    private String locationDetails;
 }

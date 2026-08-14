@@ -20,10 +20,15 @@ public class DemandeDevis {
     @JoinColumn(name = "client_id", nullable = false)
     private Client client;
 
+    @Column(name = "client_type")
+    private String clientType;
+
+    private String organization;
+
     @Column(nullable = false)
     private String prestationId;
 
-    private String prestationTitle;
+    private String evenementNature;
 
     @Column(name = "event_date")
     private String date;
@@ -33,13 +38,9 @@ public class DemandeDevis {
 
     private Integer guests;
 
-    private Boolean isInstitution;
+    private String locationType;
 
-    private String organization;
-
-    private String location;
-
-    private String cuisine;
+    private String locationDetails;
 
     @Column(columnDefinition = "TEXT")
     private String message;

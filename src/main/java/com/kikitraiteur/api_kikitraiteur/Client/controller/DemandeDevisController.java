@@ -23,7 +23,7 @@ public class DemandeDevisController {
 
     @PostMapping
     public ResponseEntity<DemandeDevisResponseDto> creerDemandeDevis(@Valid @RequestBody DemandeDevisRequestDto requestDto) {
-        log.info("Réception d'une requête de demande de devis de {}", requestDto.getClientEmail());
+        log.info("Réception d'une requête de demande de devis de {}", requestDto.getEmail());
         DemandeDevisResponseDto response = demandeDevisService.creerDemandeDevis(requestDto);
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }

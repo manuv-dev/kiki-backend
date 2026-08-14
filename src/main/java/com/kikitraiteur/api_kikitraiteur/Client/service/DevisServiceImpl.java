@@ -108,11 +108,13 @@ public class DevisServiceImpl implements DevisService {
         // Créer une DemandeDevis virtuelle pour l'historique/listes
         com.kikitraiteur.api_kikitraiteur.Client.model.DemandeDevis demande = com.kikitraiteur.api_kikitraiteur.Client.model.DemandeDevis.builder()
                 .client(client)
+                .clientType("particulier")
                 .prestationId(dto.getPrestationId() != null ? dto.getPrestationId() : "salle-diva")
                 .date(dto.getDate() != null ? dto.getDate() : LocalDate.now().toString())
                 .time(dto.getTime() != null ? dto.getTime() : "19:00")
                 .guests(dto.getGuests() != null ? dto.getGuests() : 50)
-                .location(dto.getLocation() != null ? dto.getLocation() : "Dakar")
+                .locationType("autre")
+                .locationDetails(dto.getLocation() != null ? dto.getLocation() : "Dakar")
                 .status("sent")
                 .build();
         
