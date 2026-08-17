@@ -83,4 +83,15 @@ public class ClientServiceImpl implements ClientService {
                 .map(clientMapper::toDto)
                 .collect(Collectors.toList());
     }
+
+    @Override
+    @Transactional
+    public void linkUserToClient(Long clientId, Long appUserId) {
+        clientRepository.findById(clientId).ifPresent(client -> {
+            client.setClientUserId(appUserId);
+            clientRepository.save(client);
+            log.info("Client #{} lié à l'AppUser #{}", clientId, appUserId);
+        });
+    }
 }
+

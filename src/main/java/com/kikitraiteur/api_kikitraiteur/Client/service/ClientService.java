@@ -10,4 +10,7 @@ public interface ClientService {
     ClientDto findClientByEmail(String email);
     ClientDto findClientById(Long id);
     List<ClientDto> getAllClients();
+    /** Lie l'AppUser (compte MyKiki) à son client */
+    void linkUserToClient(Long clientId, Long appUserId);
 }
+

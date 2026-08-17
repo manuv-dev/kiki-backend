@@ -32,8 +32,31 @@ public class PropositionEnvoyee {
 
     private Double prixUnitairePersonne;
 
+    /**
+     * Statuts :
+     * "envoyee"               → envoyée au client
+     * "vue"                   → le client l'a consultée
+     * "selectionnee_client"   → le client l'a sélectionnée (avec ou sans modifications)
+     * "validee_gestionnaire"  → le gestionnaire a confirmé → demande aboutie
+     * "rejetee"               → non retenue
+     */
     @Column(nullable = false)
-    private String status; 
+    @Builder.Default
+    private String status = "envoyee";
+
+    /** Commentaire laissé par le client lors de sa sélection */
+    @Column(name = "client_comment", columnDefinition = "TEXT")
+    private String clientComment;
+
+    /** Sélection JSON du client (plats/options choisis) */
+    @Column(name = "client_selection", columnDefinition = "TEXT")
+    private String clientSelection;
+
+    /** Date à laquelle le client a validé */
+    private LocalDateTime clientValidatedAt;
+
+    /** Date à laquelle le gestionnaire a confirmé → rend la demande "aboutie" */
+    private LocalDateTime gestionnaireValidatedAt;
 
     private LocalDateTime dateEnvoi;
 

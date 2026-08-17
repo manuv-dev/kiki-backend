@@ -40,6 +40,13 @@ public class Client {
 
     private String organization;
 
+    /**
+     * ID de l'AppUser lié à ce client (compte MyKiki).
+     * Null si le client n'a pas de compte en ligne.
+     */
+    @Column(name = "client_user_id")
+    private Long clientUserId;
+
     @Column(updatable = false)
     private LocalDateTime createdAt;
 
