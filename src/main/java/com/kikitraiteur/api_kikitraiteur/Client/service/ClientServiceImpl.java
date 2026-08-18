@@ -86,6 +86,27 @@ public class ClientServiceImpl implements ClientService {
 
     @Override
     @Transactional
+    public ClientDto updateClient(Long id, String email, String name, String phone, String type, String organization) {
+        Client client = clientRepository.findById(id)
+                .orElseThrow(() -> new ClientNotFoundException("Aucun client trouvé avec l'ID: " + id));
+
+        if (email != null && !email.isBlank()) client.setEmail(email);
+        if (name != null && !name.isBlank()) {
+            client.setName(name);
+            client.setNameCol(name);
+        }
+        if (phone != null && !phone.isBlank()) {
+            client.setPhone(phone);
+            client.setTelephone(phone);
+        }
+        if (type != null && !type.isBlank()) client.setType(type);
+        client.setOrganization(organization);
+
+        return clientMapper.toDto(clientRepository.save(client));
+    }
+
+    @Override
+    @Transactional
     public void linkUserToClient(Long clientId, Long appUserId) {
         clientRepository.findById(clientId).ifPresent(client -> {
             client.setClientUserId(appUserId);

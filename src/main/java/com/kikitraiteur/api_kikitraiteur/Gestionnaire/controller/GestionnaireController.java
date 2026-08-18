@@ -229,5 +229,16 @@ public class GestionnaireController {
         String organization = payload.get("organization");
         return ResponseEntity.ok(clientService.getOrCreateClient(email, name, phone, type, organization));
     }
+
+    @PutMapping("/clients/{id}")
+    @PreAuthorize("hasAnyRole('ADMIN', 'GESTIONNAIRE')")
+    public ResponseEntity<?> updateClient(@PathVariable Long id, @RequestBody Map<String, String> payload) {
+        String email = payload.get("email");
+        String name = payload.get("name");
+        String phone = payload.get("phone");
+        String type = payload.get("type");
+        String organization = payload.get("organization");
+        return ResponseEntity.ok(clientService.updateClient(id, email, name, phone, type, organization));
+    }
 }
 
