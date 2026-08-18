@@ -116,7 +116,9 @@ public class SecurityConfig {
                 "http://localhost:4200",
                 "http://localhost:4300",
                 "https://*.kikitraiteursenegal.net",
-                "https://*.render.com"
+                "https://*.render.com",
+                "https://*.vercel.app",
+                "https://kiki-front.vercel.app"
         ));
         configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"));
         configuration.setAllowedHeaders(List.of("*"));
