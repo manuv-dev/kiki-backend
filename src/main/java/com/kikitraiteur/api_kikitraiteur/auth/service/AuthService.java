@@ -62,7 +62,10 @@ public class AuthService {
 
         String redirectUrl = switch (user.getRole()) {
             case ADMIN, GESTIONNAIRE -> "/gestionnaire/dashboard";
-            case PERSONNEL -> "/gestionnaire/dashboard";
+            case PERSONNEL,
+                 RESPONSABLE_CUISINE, SOUS_CHEF, ECONOME, MAGASINIER,
+                 CONTROLEUR, CUISINIER, SERVEUR, AIDE_CUISINIER,
+                 CHAUFFEUR, PLONGEUR, AGENT_SECURITE -> "/gestionnaire/dashboard";
             case CLIENT -> "/mykiki";
         };
 

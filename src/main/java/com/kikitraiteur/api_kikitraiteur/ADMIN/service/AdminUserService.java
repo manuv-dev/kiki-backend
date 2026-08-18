@@ -27,8 +27,8 @@ public class AdminUserService {
     private String frontendUrl;
 
     public List<AdminUserResponse> getAllStaff() {
-        return userRepository.findAllByRoleIn(List.of(UserRole.ADMIN, UserRole.GESTIONNAIRE, UserRole.PERSONNEL))
-                .stream()
+        return userRepository.findAll().stream()
+                .filter(u -> u.getRole() != UserRole.CLIENT)
                 .map(this::mapToResponse)
                 .collect(Collectors.toList());
     }
@@ -44,7 +44,12 @@ public class AdminUserService {
         }
 
         String tempPassword = generateRandomPassword();
-        String slug = request.getRole().name().toLowerCase() + "-kiki-" + UUID.randomUUID().toString().substring(0, 8);
+
+        // Générer un slug pour Admin et Gestionnaire uniquement
+        String slug = null;
+        if (request.getRole() == UserRole.ADMIN || request.getRole() == UserRole.GESTIONNAIRE) {
+            slug = request.getRole().name().toLowerCase() + "-kiki-" + java.util.UUID.randomUUID().toString().substring(0, 8);
+        }
 
         AppUser user = AppUser.builder()
                 .fullName(request.getFullName())
@@ -52,14 +57,14 @@ public class AdminUserService {
                 .passwordHash(passwordEncoder.encode(tempPassword))
                 .role(request.getRole())
                 .customLoginSlug(slug)
-                .tempPasswordChangeRequired(true) // L'utilisateur devra changer son mot de passe
+                .tempPasswordChangeRequired(true)
                 .active(true)
                 .build();
 
         user = userRepository.save(user);
 
         AdminUserResponse response = mapToResponse(user);
-        response.setTempPassword(tempPassword); // On retourne le mot de passe généré 1 seule fois
+        response.setTempPassword(tempPassword);
         return response;
     }
 

@@ -68,8 +68,13 @@ public class SecurityConfig {
                 .requestMatchers("/api/admin/**").hasRole("ADMIN")
                 // Espace client MyKiki
                 .requestMatchers("/api/mykiki/**").hasAnyRole("CLIENT", "ADMIN")
-                // Back-office gestionnaire + admin
-                .requestMatchers("/api/gestionnaire/**").hasAnyRole("ADMIN", "GESTIONNAIRE", "PERSONNEL")
+                // Back-office gestionnaire + admin + tous les sous-rôles personnel
+                .requestMatchers("/api/gestionnaire/**").hasAnyRole(
+                    "ADMIN", "GESTIONNAIRE", "PERSONNEL",
+                    "RESPONSABLE_CUISINE", "SOUS_CHEF", "ECONOME", "MAGASINIER",
+                    "CONTROLEUR", "CUISINIER", "SERVEUR", "AIDE_CUISINIER",
+                    "CHAUFFEUR", "PLONGEUR", "AGENT_SECURITE"
+                )
                 // Notifications
                 .requestMatchers("/api/notifications/**").authenticated()
                 // Tout le reste nécessite une auth
