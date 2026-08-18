@@ -15,10 +15,11 @@ public class AdminUserResponse {
     private UserRole role;
     private String customLoginSlug;
     private boolean active;
+    private boolean tempPasswordChangeRequired;
     private LocalDateTime createdAt;
     private LocalDateTime lastLoginAt;
-    
-    // Used when returning a newly created user to show the auto-generated password
+
+    // Retourné uniquement lors de la création ou d'un reset d'accès
     private String tempPassword;
     private String loginUrl;
 }

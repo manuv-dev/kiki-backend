@@ -34,6 +34,26 @@ public class AdminUserController {
         return ResponseEntity.ok(adminUserService.updateStaffUser(id, request));
     }
 
+    /**
+     * Réinitialise l'accès d'un utilisateur :
+     * nouveau mot de passe temporaire généré, obligé de changer à la prochaine connexion.
+     */
+    @PostMapping("/{id}/reset-access")
+    public ResponseEntity<AdminUserResponse> resetAccess(@PathVariable Long id) {
+        return ResponseEntity.ok(adminUserService.resetAccess(id));
+    }
+
+    /**
+     * Active ou désactive un compte utilisateur.
+     * Query param: active=true|false
+     */
+    @PatchMapping("/{id}/toggle-active")
+    public ResponseEntity<AdminUserResponse> toggleActive(
+            @PathVariable Long id,
+            @RequestParam boolean active) {
+        return ResponseEntity.ok(adminUserService.toggleActive(id, active));
+    }
+
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteStaffUser(@PathVariable Long id) {
         adminUserService.deleteStaffUser(id);

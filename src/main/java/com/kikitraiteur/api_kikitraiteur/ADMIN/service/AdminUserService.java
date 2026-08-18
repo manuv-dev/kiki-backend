@@ -23,7 +23,7 @@ public class AdminUserService {
     private final AppUserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
 
-    @Value("${app.frontend.url:http://localhost:4200}")
+    @Value("${app.frontend.url:https://kiki-front.vercel.app}")
     private String frontendUrl;
 
     public List<AdminUserResponse> getAllStaff() {
@@ -90,6 +90,46 @@ public class AdminUserService {
         user = userRepository.save(user);
         return mapToResponse(user);
     }
+
+    /**
+     * Réinitialise l'accès d'un utilisateur :
+     * génère un nouveau mot de passe temporaire et force le changement à la prochaine connexion.
+     */
+    @Transactional
+    public AdminUserResponse resetAccess(Long id) {
+        AppUser user = userRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Utilisateur non trouvé"));
+
+        if (user.getRole() == UserRole.ADMIN) {
+            throw new IllegalArgumentException("Impossible de réinitialiser l'accès d'un administrateur.");
+        }
+
+        String newPassword = generateRandomPassword();
+        user.setPasswordHash(passwordEncoder.encode(newPassword));
+        user.setTempPasswordChangeRequired(true);
+        user = userRepository.save(user);
+
+        AdminUserResponse response = mapToResponse(user);
+        response.setTempPassword(newPassword);
+        return response;
+    }
+
+    /**
+     * Active ou désactive un compte utilisateur.
+     */
+    @Transactional
+    public AdminUserResponse toggleActive(Long id, boolean active) {
+        AppUser user = userRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Utilisateur non trouvé"));
+
+        if (user.getRole() == UserRole.ADMIN && !active) {
+            throw new IllegalArgumentException("Impossible de désactiver un compte administrateur.");
+        }
+
+        user.setActive(active);
+        user = userRepository.save(user);
+        return mapToResponse(user);
+    }
     
     @Transactional
     public void deleteStaffUser(Long id) {
@@ -109,6 +149,7 @@ public class AdminUserService {
                 .role(user.getRole())
                 .customLoginSlug(user.getCustomLoginSlug())
                 .active(user.isActive())
+                .tempPasswordChangeRequired(user.isTempPasswordChangeRequired())
                 .createdAt(user.getCreatedAt())
                 .lastLoginAt(user.getLastLoginAt())
                 .loginUrl(user.getCustomLoginSlug() != null ? frontendUrl + "/login/" + user.getCustomLoginSlug() : null)
