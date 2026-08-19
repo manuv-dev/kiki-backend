@@ -13,5 +13,7 @@ public interface ClientService {
     ClientDto updateClient(Long id, String email, String name, String phone, String type, String organization);
     /** Lie l'AppUser (compte MyKiki) à son client */
     void linkUserToClient(Long clientId, Long appUserId);
+    
+    void deleteClient(Long id);
 }
 

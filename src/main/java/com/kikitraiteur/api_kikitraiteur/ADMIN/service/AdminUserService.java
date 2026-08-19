@@ -45,11 +45,8 @@ public class AdminUserService {
 
         String tempPassword = generateRandomPassword();
 
-        // Générer un slug pour Admin et Gestionnaire uniquement
-        String slug = null;
-        if (request.getRole() == UserRole.ADMIN || request.getRole() == UserRole.GESTIONNAIRE) {
-            slug = request.getRole().name().toLowerCase() + "-kiki-" + java.util.UUID.randomUUID().toString().substring(0, 8);
-        }
+        // Générer un slug unique pour tous les membres du personnel
+        String slug = request.getRole().name().toLowerCase() + "-kiki-" + java.util.UUID.randomUUID().toString().substring(0, 8);
 
         AppUser user = AppUser.builder()
                 .fullName(request.getFullName())

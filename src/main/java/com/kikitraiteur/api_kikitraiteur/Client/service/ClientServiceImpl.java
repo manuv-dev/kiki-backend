@@ -114,5 +114,14 @@ public class ClientServiceImpl implements ClientService {
             log.info("Client #{} lié à l'AppUser #{}", clientId, appUserId);
         });
     }
+
+    @Override
+    @Transactional
+    public void deleteClient(Long id) {
+        Client client = clientRepository.findById(id)
+                .orElseThrow(() -> new ClientNotFoundException("Aucun client trouvé avec l'ID: " + id));
+        clientRepository.delete(client);
+        log.info("Client #{} supprimé avec succès.", id);
+    }
 }
 

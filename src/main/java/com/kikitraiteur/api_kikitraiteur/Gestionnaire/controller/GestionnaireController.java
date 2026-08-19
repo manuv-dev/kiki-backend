@@ -240,5 +240,12 @@ public class GestionnaireController {
         String organization = payload.get("organization");
         return ResponseEntity.ok(clientService.updateClient(id, email, name, phone, type, organization));
     }
+
+    @DeleteMapping("/clients/{id}")
+    @PreAuthorize("hasAnyRole('ADMIN', 'GESTIONNAIRE')")
+    public ResponseEntity<?> deleteClient(@PathVariable Long id) {
+        clientService.deleteClient(id);
+        return ResponseEntity.ok().build();
+    }
 }
 
